@@ -3,6 +3,7 @@ package be.kuleuven.cs.projects.samples.up.document_sending_service.clients;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -42,24 +43,12 @@ public class AccessControlImplService
         super(__getWsdlLocation(), ACCESSCONTROLIMPLSERVICE_QNAME);
     }
 
-    public AccessControlImplService(WebServiceFeature... features) {
-        super(__getWsdlLocation(), ACCESSCONTROLIMPLSERVICE_QNAME, features);
-    }
-
     public AccessControlImplService(URL wsdlLocation) {
         super(wsdlLocation, ACCESSCONTROLIMPLSERVICE_QNAME);
     }
 
-    public AccessControlImplService(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, ACCESSCONTROLIMPLSERVICE_QNAME, features);
-    }
-
     public AccessControlImplService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
-    }
-
-    public AccessControlImplService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
     }
 
     /**
