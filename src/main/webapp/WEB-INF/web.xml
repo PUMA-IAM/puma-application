@@ -17,5 +17,16 @@
         <servlet-name>ActionReplyServlet</servlet-name>
         <url-pattern>/AccessControlCommunicationReplyServlet</url-pattern>
     </servlet-mapping>
+    <listener>
+    	<listener-class>puma.application.authz.PDPInitializer</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>AuthorizationExampleServlet</servlet-name>
+        <servlet-class>puma.application.authz.AuthorizationExample</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthorizationExampleServlet</servlet-name>
+        <url-pattern>/authz-example</url-pattern>
+    </servlet-mapping>
     
 </web-app>
