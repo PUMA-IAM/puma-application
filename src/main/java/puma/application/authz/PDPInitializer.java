@@ -34,6 +34,7 @@ public class PDPInitializer implements ServletContextListener {
 		Collection<InputStream> policies = new LinkedList<InputStream>();
 		if(fileNames == null) {
 			logger.warning("no policies found!");
+			return;
 		} else {
 			for(String fileName: fileNames) {
 				// only add the correct filenames to the result
