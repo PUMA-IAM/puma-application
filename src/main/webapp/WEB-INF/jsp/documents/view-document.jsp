@@ -15,22 +15,20 @@
 	<div class="row">
 
 		<div class="col-md-8">
-			<iframe src="meetings.pdf" class="document"></iframe>
+			<iframe src="<c:url value="/resources/files/doc.pdf"/>" class="document"></iframe>
 		</div>
 
 		<div class="col-md-3">
 			<h4>Name</h4>
 			<p><c:out value="${doc.name}" /></p>
 			<h4>File name</h4>
-			<p>TODO</p>
+			<p>doc.pdf</p>
 			<h4>Date</h4>
 			<p><c:out value="${doc.date}" /></p>
 			<h4>From</h4>
 			<p><c:out value="${doc.origin}" /></p>
 			<h4>To</h4>
 			<p><c:out value="${doc.destination}" /></p>
-			<h4>Other data</h4>
-			<p>dfdfdfd</p>
 			<p >
 				<a class="btn btn-danger full-width" href="<c:url value="/docs/${doc.id}/delete"/>"><span class="glyphicon glyphicon-remove"></span> Delete</a>
       </p>

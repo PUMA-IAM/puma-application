@@ -1,0 +1,175 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Minutes of the meeting of last week
+\end_layout
+
+\begin_layout Author
+John Doe
+\end_layout
+
+\begin_layout Date
+22th of October 2013
+\end_layout
+
+\begin_layout Paragraph
+Present
+\end_layout
+
+\begin_layout Standard
+Ashley Brock, Jewell Kian, Davey Westley, Lindsey Leith, Leopold Darrin
+\end_layout
+
+\begin_layout Paragraph
+Excused
+\end_layout
+
+\begin_layout Standard
+Mattie Hall, Gallagher Chance, Ozzy Balfour
+\end_layout
+
+\begin_layout Section
+Opening
+\end_layout
+
+\begin_layout Standard
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ Phasellus condimentum ultricies massa nec tincidunt.
+ Mauris vitae mattis nibh.
+ Integer justo est, mattis at iaculis ac, blandit vitae justo.
+ Nullam sit amet lectus a mauris condimentum suscipit quis sed odio.
+ Maecenas augue sapien, auctor ac felis vitae, pulvinar scelerisque est.
+ Mauris sit amet consequat velit.
+ Aliquam bibendum imperdiet vulputate.
+ Nullam dictum, mauris vel tincidunt pharetra, lacus erat vestibulum turpis,
+ quis hendrerit augue lacus vitae elit.
+ Pellentesque ullamcorper diam augue, sed ultricies quam tempor at.
+ Curabitur fermentum augue quis purus semper, a sollicitudin leo hendrerit.
+ Donec ultrices nibh sed quam cursus, quis tincidunt enim tempus.
+ Maecenas ut felis quis quam vehicula posuere a in augue.
+ Nullam eget pretium felis.
+\end_layout
+
+\begin_layout Section
+The new company policy
+\end_layout
+
+\begin_layout Standard
+Morbi imperdiet turpis vel nibh luctus commodo eu malesuada nibh.
+ Integer ultrices felis quis imperdiet bibendum.
+ Nullam tempor ante non bibendum adipiscing.
+ Nullam aliquet tempus neque a dictum.
+ Vivamus eleifend facilisis bibendum.
+ Mauris neque purus, mattis vitae viverra quis, ornare ac nibh.
+ Maecenas pellentesque eget neque nec bibendum.
+ Nunc viverra risus leo, et mollis enim malesuada vitae.
+ Proin porttitor a enim eget viverra.
+ Proin volutpat est neque, sed venenatis leo hendrerit non.
+ Quisque tortor erat, ultricies vitae sollicitudin quis, suscipit sit amet
+ nulla.
+ Nunc tincidunt sem vel orci rhoncus malesuada.
+\end_layout
+
+\begin_layout Standard
+Vestibulum venenatis erat eget sollicitudin iaculis.
+ Aenean hendrerit vestibulum turpis, eu facilisis lectus.
+ Vivamus vitae justo facilisis, ornare diam quis, porttitor dui.
+ Curabitur ut elementum est, in pellentesque velit.
+ Nulla cursus nibh nec mi fringilla, eget placerat sem lobortis.
+ Morbi hendrerit vehicula consequat.
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ Donec pulvinar tempor blandit.
+\end_layout
+
+\begin_layout Standard
+Duis mattis in sapien ac egestas.
+ Phasellus ac ante scelerisque, consectetur ante non, mollis ante.
+ Nullam viverra sapien in accumsan ultrices.
+ Etiam ipsum dui, iaculis vitae convallis eget, sagittis eget ante.
+ Duis et dui sapien.
+ Donec adipiscing luctus ipsum, a convallis sapien fringilla vitae.
+ In tristique risus imperdiet enim accumsan, ac pretium nunc cursus.
+ Mauris ullamcorper nisl vel massa varius, commodo auctor lorem tempor.
+ Mauris tempus dapibus nisi, iaculis cursus ante tempus vitae.
+ Proin eget dapibus tortor.
+\end_layout
+
+\begin_layout Standard
+Praesent tincidunt convallis porta.
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ Aenean aliquam sagittis consectetur.
+ Donec vulputate vehicula enim quis aliquet.
+ Donec a sem auctor, venenatis orci sit amet, vulputate quam.
+ Nulla hendrerit neque risus.
+ Vivamus gravida ullamcorper risus quis ultricies.
+ Integer elementum risus lacus, at vulputate augue consequat vel.
+ Duis non augue sem.
+ Aliquam quis tortor enim.
+ Duis turpis sem, fermentum vitae odio et, convallis posuere nunc.
+\end_layout
+
+\begin_layout Section
+...
+\end_layout
+
+\end_body
+\end_document
