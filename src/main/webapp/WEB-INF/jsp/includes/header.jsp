@@ -57,7 +57,7 @@
 				</ul>
 
 				<c:choose>
-					<c:when test="${empty user}">
+					<c:when test="${empty user_name}">
 						<div class="navbar-form navbar-right">
 							<a type="submit" class="btn btn-success"
 								href="<c:url value="/user/login"/>">Log in</a>
@@ -70,7 +70,7 @@
 							<li class=""><a href="<c:url value="/docs/create"/>">Create
 									document</a></li>
 							<li class="dropdown"><a href="#" class="dropdown-toggle"
-								data-toggle="dropdown">Hello, <c:out value="${user}" /> <b
+								data-toggle="dropdown">Hello, <c:out value="${user_name}" /> <b
 									class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li><a href="<c:url value="/user/logout"/>">Log out</a></li>
