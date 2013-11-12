@@ -90,8 +90,9 @@ public class AuthenticationController {
 
 	@RequestMapping(value = "/user/logout", method = RequestMethod.GET)
 	public String logout(ModelMap model, HttpSession session) {
-		session.removeAttribute("user");
-		session.removeAttribute("user-email");
+		session.removeAttribute("user_name");
+		session.removeAttribute("user_id");
+		session.removeAttribute("user_email");
 		session.removeAttribute("subject");
 
 		// TODO logout in the PUMA authn service?
