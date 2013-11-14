@@ -25,8 +25,8 @@ public class DriverDeregistrator implements ServletContextListener {
 		// Source: http://stackoverflow.com/a/19027873
 		try {
 			AbandonedConnectionCleanupThread.shutdown();
+			logger.info("Deregistered drivers at contextDestroyed");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			logger.log(Level.WARNING, "error when cleaning up abandoned connection threads", e);
 		}
 		
