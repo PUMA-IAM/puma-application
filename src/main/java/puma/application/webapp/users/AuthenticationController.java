@@ -20,7 +20,7 @@ import puma.peputils.attributes.SubjectAttributeValue;
 @Controller
 public class AuthenticationController {
 
-	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://ditmoetfalen/ServiceAccessServlet";
+	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://dnetcloud-tomcat:8080/authn/ServiceAccessServlet";
 
 	@RequestMapping(value = "/user/login", method = RequestMethod.GET)
 	public String login(ModelMap model,
