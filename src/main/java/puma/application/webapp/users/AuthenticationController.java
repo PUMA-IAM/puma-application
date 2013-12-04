@@ -59,7 +59,7 @@ public class AuthenticationController {
 			@RequestParam("Name") String name,
 			@RequestParam("Email") String email,
 			@RequestParam("Tenant") String tenant,
-			@RequestParam("Roles") String[] roles, HttpSession session) {
+			@RequestParam("Role") String[] roles, HttpSession session) {
 		// set the application attributes
 		session.setAttribute("user_name", id); 
 		session.setAttribute("user_id", id);
