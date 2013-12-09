@@ -61,9 +61,9 @@ public class AuthenticationController {
 			@RequestParam("Tenant") String tenant,
 			@RequestParam("Role") String[] roles, HttpSession session) {
 		// set the application attributes
-		session.setAttribute("user_name", id); 
+		session.setAttribute("user_name", name); 
 		session.setAttribute("user_id", id);
-		session.setAttribute("user_email", "maarten.decat@cs.kuleuven.be");
+		session.setAttribute("user_email", email);
 		// store the authorization subject
 		Subject subject = new Subject(id);
 		SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
