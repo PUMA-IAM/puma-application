@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import puma.peputils.attributes.SubjectAttributeValue;
 public class AuthenticationController {
 
 	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://dnetcloud-tomcat:8080/authn/ServiceAccessServlet";
+	private static final String LOGOUT_URL = "http://dnetcloud-tomcat:8080/authn/LogoutServlet";;
 
 	@RequestMapping(value = "/user/login", method = RequestMethod.GET)
 	public String login(ModelMap model,
@@ -89,15 +91,15 @@ public class AuthenticationController {
 	}
 
 	@RequestMapping(value = "/user/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model, HttpSession session) {
-		session.removeAttribute("user_name");
-		session.removeAttribute("user_id");
-		session.removeAttribute("user_email");
-		session.removeAttribute("subject");
-
-		// TODO logout in the PUMA authn service?
-
-		return "redirect:/";
+	public String logout(ModelMap model, HttpSession session, HttpServletRequest request, UriComponentsBuilder builder) {
+		session.invalidate();
+		String relayState = builder.path("/").build().toString();
+    	try {
+			relayState = URLEncoder.encode(relayState, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "redirect:" + LOGOUT_URL + "?RelayState=" + relayState;
 	}
 
 }
