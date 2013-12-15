@@ -10,7 +10,7 @@
 		<p>eDocs Inc provides services to companies that gravely
 					simplify your document management.</p>
 		<p>
-			<a class="btn btn-primary btn-lg" role="button" href="/login">Log in &raquo;</a>
+			<a class="btn btn-primary btn-lg" role="button" href="<c:url value="/user/login"/>">Log in &raquo;</a>
 		</p>
 	</div>
 </div>

@@ -151,6 +151,7 @@ public class DocumentController {
 		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
 		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
 		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
+		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", "TODO")); //TODO
 		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", "TODO")); //TODO
 		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf")); // TODO
 		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));

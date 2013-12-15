@@ -58,21 +58,23 @@ public class AuthenticationController {
 	@RequestMapping(value = "/user/login-callback")
 	public String loginCallback(ModelMap model,
 			@RequestParam("UserId") String id,
-			@RequestParam("Name") String name,
-			@RequestParam("Email") String email,
-			@RequestParam("Tenant") String tenant,
-			@RequestParam("Role") String[] roles, HttpSession session) {
+			@RequestParam(value = "Name", defaultValue = "") String name,
+			@RequestParam(value = "Email", defaultValue = "") String email,
+			@RequestParam(value = "Tenant", defaultValue = "") String tenant,
+			@RequestParam(value = "Role") String[] roles, HttpSession session) {
 		// set the application attributes
 		session.setAttribute("user_name", name); 
 		session.setAttribute("user_id", id);
 		session.setAttribute("user_email", email);
 		// store the authorization subject
 		Subject subject = new Subject(id);
-		SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
-		for (String r : Arrays.asList(roles)) {
-			rolesAttr.addValue(r);
+		if (roles != null && roles.length == 0) {
+			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
+			for (String r : Arrays.asList(roles)) {
+				rolesAttr.addValue(r);
+			}
+			subject.addAttributeValue(rolesAttr);
 		}
-		subject.addAttributeValue(rolesAttr);
 		subject.addAttributeValue(new SubjectAttributeValue("tenant", tenant));
 		subject.addAttributeValue(new SubjectAttributeValue("email", email));
 		session.setAttribute("subject", subject);

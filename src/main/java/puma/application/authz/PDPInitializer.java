@@ -1,9 +1,14 @@
 package puma.application.authz;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +38,8 @@ public class PDPInitializer implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(PDPInitializer.class
 			.getName());
 
+	private static final String POLICY_PROPERTY = "puma.application.policydir";
+
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		// deregister the application PDP
@@ -53,6 +60,7 @@ public class PDPInitializer implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent e) {
 		// initialize the PDP with all policies in the policy directory
 		try {
+			initializeProperties(e);
 			ApplicationPEP.getInstance().initializePDP(getPolicyDir());
 			logger.info("initialized application PDP");
 		} catch(Exception exc) {
@@ -87,9 +95,28 @@ public class PDPInitializer implements ServletContextListener {
 		}
 	}
 
+	private void initializeProperties(ServletContextEvent e) {
+		String subPath = "WEB-INF/.properties";
+		File propertiesFile = new File(e.getServletContext().getRealPath(subPath));
+		try {
+			Properties p = new Properties();
+			if (propertiesFile.exists()) {
+				logger.info("Fetching properties from " + propertiesFile);
+				p.load(new FileInputStream(e.getServletContext().getRealPath(subPath)));
+				System.setProperty(POLICY_PROPERTY, p.getProperty(POLICY_PROPERTY));
+			} else {
+				logger.warning("Properties file not found at " + propertiesFile.getAbsolutePath());
+			}
+		} catch (FileNotFoundException e1) {
+			logger.warning("File not found at " + propertiesFile.getAbsolutePath());
+		} catch (IOException e1) {
+			logger.warning("Could not read properties file");
+		}
+	}
+
 	private String getPolicyDir() {
 		//return POLICY_DIR;
-		String dir = System.getProperty("puma.application.policydir");
+		String dir = System.getProperty(POLICY_PROPERTY);
 		if(dir == null) {
 			logger.severe("System property \"puma.application.policydir\" not found, no policies will be loaded.");
 		}
