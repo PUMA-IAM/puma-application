@@ -75,6 +75,17 @@ public class Document {
 		this.destination = destination;
 	}
 	
+	@Basic
+	private String creatingTenant;
+
+	public String getCreatingTenant() {
+		return creatingTenant;
+	}
+
+	public void setCreatingTenant(String creatingTenant) {
+		this.creatingTenant = creatingTenant;
+	}
+	
 	/**
 	 * For JPA
 	 */
@@ -82,10 +93,11 @@ public class Document {
 		
 	}
 	
-	public Document(String name, String origin, String destination) {
+	public Document(String name, String origin, String destination, String creatingTenant) {
 		this.name = name;
 		this.origin = origin;
 		this.destination = destination;
+		this.creatingTenant = creatingTenant;
 		this.date = new Date();
 	}
 

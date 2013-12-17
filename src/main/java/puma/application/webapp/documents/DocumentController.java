@@ -68,7 +68,8 @@ public class DocumentController {
 		
 		// Create the Document
 		String origin = (String) session.getAttribute("user_email");
-		Document doc = new Document(name, origin, destination);
+		String creatingTenant = (String) session.getAttribute("user_tenant");
+		Document doc = new Document(name, origin, destination, creatingTenant);
 		docService.addDocument(doc);
 		Long newId = doc.getId();
 		MessageManager.getInstance().addMessage(session, "success", "Document successfully created.");
@@ -126,7 +127,7 @@ public class DocumentController {
 		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
 		// Enforce the decision
 		if(!authorized) {
-			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to access document #" + doc.getId());
+			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to delete document #" + doc.getId());
 			return "redirect:/docs";
 		}
 		
@@ -151,7 +152,7 @@ public class DocumentController {
 		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
 		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
 		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
-		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", "TODO")); //TODO
+		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant())); //TODO
 		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", "TODO")); //TODO
 		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf")); // TODO
 		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));

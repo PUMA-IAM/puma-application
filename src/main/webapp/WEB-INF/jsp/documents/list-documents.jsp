@@ -63,7 +63,7 @@
 						<tr>
 							<td><c:out value="${doc.date}" /></td>
 							<td><c:out value="${doc.name}" /></td>
-							<td><c:out value="${doc.origin}" /></td>
+							<td><c:out value="${doc.destination}" /></td>
 							<td><a class="btn btn-danger btn-sm"
 								href="<c:url value="/docs/${doc.id}/delete"/>"><span
 									class="glyphicon glyphicon-remove"></span> Delete</a> <a

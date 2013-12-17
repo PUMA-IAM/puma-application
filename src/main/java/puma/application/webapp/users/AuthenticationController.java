@@ -66,6 +66,7 @@ public class AuthenticationController {
 		session.setAttribute("user_name", name); 
 		session.setAttribute("user_id", id);
 		session.setAttribute("user_email", email);
+		session.setAttribute("user_tenant", tenant);
 		// store the authorization subject
 		Subject subject = new Subject(id);
 		if (roles != null && roles.length > 0) {
