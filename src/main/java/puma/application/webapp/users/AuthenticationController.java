@@ -61,14 +61,14 @@ public class AuthenticationController {
 			@RequestParam(value = "Name", defaultValue = "") String name,
 			@RequestParam(value = "Email", defaultValue = "") String email,
 			@RequestParam(value = "Tenant", defaultValue = "") String tenant,
-			@RequestParam(value = "Role") String[] roles, HttpSession session) {
+			@RequestParam(value = "Role", defaultValue = "") String[] roles, HttpSession session) {
 		// set the application attributes
 		session.setAttribute("user_name", name); 
 		session.setAttribute("user_id", id);
 		session.setAttribute("user_email", email);
 		// store the authorization subject
 		Subject subject = new Subject(id);
-		if (roles != null && roles.length == 0) {
+		if (roles != null && roles.length > 0) {
 			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
 			for (String r : Arrays.asList(roles)) {
 				rolesAttr.addValue(r);
