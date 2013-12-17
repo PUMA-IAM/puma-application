@@ -59,7 +59,7 @@
 				<c:choose>
 					<c:when test="${empty user_name}">
 						<div class="navbar-form navbar-right">
-							<a type="submit" class="btn btn-success"
+							<a type="submit" class="btn btn-primary"
 								href="<c:url value="/user/login"/>">Log in</a>
 						</div>
 					</c:when>
