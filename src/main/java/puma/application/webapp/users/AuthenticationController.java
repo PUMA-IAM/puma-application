@@ -88,7 +88,7 @@ public class AuthenticationController {
 //		return "test";
 
 		MessageManager.getInstance().addMessage(session, "success",
-				"Welcome back, commander");
+				"Welcome back, " + name);
 		return "redirect:/docs";
 	}
 
