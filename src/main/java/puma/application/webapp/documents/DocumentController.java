@@ -28,7 +28,7 @@ public class DocumentController {
 
 	@RequestMapping(value = "/docs", method = RequestMethod.GET)
 	public String listDocuments(ModelMap model, HttpSession session) {
-		String userEmail = (String) session.getAttribute("user-email");
+		String userEmail = (String) session.getAttribute("user_email");
 		List<Document> receivedDocuments = docService.getDocumentsByDestination(userEmail);
 		List<Document> sentDocuments = docService.getDocumentsByOrigin(userEmail);
 		model.addAttribute("receivedDocuments", receivedDocuments);
@@ -67,7 +67,7 @@ public class DocumentController {
 		// (not security here, but usability)
 		
 		// Create the Document
-		String origin = (String) session.getAttribute("user-email");
+		String origin = (String) session.getAttribute("user_email");
 		Document doc = new Document(name, origin, destination);
 		docService.addDocument(doc);
 		Long newId = doc.getId();
