@@ -21,8 +21,8 @@ import puma.peputils.attributes.SubjectAttributeValue;
 @Controller
 public class AuthenticationController {
 
-	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://dnetcloud-tomcat:8080/authn/ServiceAccessServlet";
-	private static final String LOGOUT_URL = "http://dnetcloud-tomcat:8080/authn/LogoutServlet";;
+	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://sis3s-puma:8080/authn/ServiceAccessServlet";
+	private static final String LOGOUT_URL = "http://sis3s-puma:8080/authn/LogoutServlet";;
 
 	@RequestMapping(value = "/user/login", method = RequestMethod.GET)
 	public String login(ModelMap model,

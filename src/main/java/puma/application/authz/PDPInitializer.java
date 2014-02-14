@@ -31,7 +31,7 @@ public class PDPInitializer implements ServletContextListener {
 
 	private static final String APPLICATION_PDP_REGISTRY_RMI_NAME = "application-pdp-registry";
 
-	private static final int APPLICATION_PDP_REGISTRY_RMI_PORT = 2030;
+	private static final int APPLICATION_PDP_REGISTRY_RMI_PORT = 2050;
 
 	//private static final String POLICY_DIR = "/home/maartend/PhD/code/workspace-jee/puma-application-pdp/src/main/resources/policies/";
 
