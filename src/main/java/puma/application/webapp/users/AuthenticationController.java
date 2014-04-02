@@ -23,7 +23,7 @@ import puma.peputils.attributes.SubjectAttributeValue;
 public class AuthenticationController {
 
 	private static final String PUMA_AUTHENTICATION_ENDPOINT = "/authn/ServiceAccessServlet";
-	private static final String LOGOUT_URL = "/authn/LogoutServlet";;
+	private static final String LOGOUT_URL = "/authn/LogoutServlet";
 
 	@RequestMapping(value = "/user/login", method = RequestMethod.GET)
 	public RedirectView login(ModelMap model,
@@ -52,8 +52,6 @@ public class AuthenticationController {
 		
 //		model.addAttribute("output", targetURI);
 //		return "test";
-		
-		
 		
 		return new RedirectView(targetURI); // "redirect:..." would always be relative to the current context path, we do not want that...
 	}
