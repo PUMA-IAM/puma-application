@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import puma.application.webapp.msgs.MessageManager;
@@ -21,11 +22,11 @@ import puma.peputils.attributes.SubjectAttributeValue;
 @Controller
 public class AuthenticationController {
 
-	private static final String PUMA_AUTHENTICATION_ENDPOINT = "http://sis3s-puma:8080/authn/ServiceAccessServlet";
-	private static final String LOGOUT_URL = "http://sis3s-puma:8080/authn/LogoutServlet";;
+	private static final String PUMA_AUTHENTICATION_ENDPOINT = "/authn/ServiceAccessServlet";
+	private static final String LOGOUT_URL = "/authn/LogoutServlet";;
 
 	@RequestMapping(value = "/user/login", method = RequestMethod.GET)
-	public String login(ModelMap model,
+	public RedirectView login(ModelMap model,
 			@RequestParam(value = "RelayState", defaultValue = "") String relayState,
 			@RequestParam(value = "Tenant", defaultValue = "") String tenant, HttpSession session,
 			UriComponentsBuilder builder) {
@@ -52,7 +53,9 @@ public class AuthenticationController {
 //		model.addAttribute("output", targetURI);
 //		return "test";
 		
-		return "redirect:" + targetURI;
+		
+		
+		return new RedirectView(targetURI); // "redirect:..." would always be relative to the current context path, we do not want that...
 	}
 
 	@RequestMapping(value = "/user/login-callback")
