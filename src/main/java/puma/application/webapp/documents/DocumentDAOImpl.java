@@ -30,4 +30,11 @@ public class DocumentDAOImpl implements DocumentDAO {
 		return results;
 	}
 
+	@Override
+	public List<Document> getDocumentsByCreatingTenant(String tenantId) {
+		TypedQuery<Document> query = em.createNamedQuery("documentsByCreatingTenant", Document.class);
+		query.setParameter("creatingTenant", tenantId);
+		List<Document> results = query.getResultList();
+		return results;
+	}
 }

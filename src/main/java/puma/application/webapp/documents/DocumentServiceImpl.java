@@ -45,4 +45,9 @@ public class DocumentServiceImpl implements DocumentService {
 		return documentDAO.getDocumentsByOrigin(origin);
 	}
 
+	@Override
+	public List<Document> getDocumentsByCreatingTenant(String tenantId) {
+		return documentDAO.getDocumentsByCreatingTenant(tenantId);
+	}
+
 }

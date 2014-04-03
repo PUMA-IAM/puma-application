@@ -19,18 +19,26 @@ import puma.peputils.Environment;
 import puma.peputils.Subject;
 import puma.peputils.attributes.EnvironmentAttributeValue;
 import puma.peputils.attributes.ObjectAttributeValue;
+import puma.sp.mgmt.repositories.organization.TenantService;
 
 @Controller
 public class DocumentController {
 
 	@Autowired
 	private DocumentService docService;
+	
+	@Autowired
+	private TenantService tenantService;
 
 	@RequestMapping(value = "/docs", method = RequestMethod.GET)
 	public String listDocuments(ModelMap model, HttpSession session) {
+		String userTenant = (String) session.getAttribute("user_tenant");
 		String userEmail = (String) session.getAttribute("user_email");
-		List<Document> receivedDocuments = docService.getDocumentsByDestination(userEmail);
+		List<Document> receivedDocuments = docService.getDocumentsByDestination(userTenant);
 		List<Document> sentDocuments = docService.getDocumentsByOrigin(userEmail);
+		for (Document next: docService.getDocumentsByCreatingTenant(userTenant))
+			if (!sentDocuments.contains(next))
+				sentDocuments.add(next);
 		model.addAttribute("receivedDocuments", receivedDocuments);
 		model.addAttribute("sentDocuments", sentDocuments);
 		model.addAttribute("msgs", MessageManager.getInstance().getMessages(session));
@@ -52,10 +60,21 @@ public class DocumentController {
 	}
 
 	@RequestMapping(value = "/docs/create", method = RequestMethod.GET)
-	public String createDocument(ModelMap model) {
-		// TODO first check whether the subject can create new Documents 
-		// (not security here, but usability)
-		
+	public String createDocument(ModelMap model, HttpSession session) {
+		// Check whether the current user is allowed to send the document
+		// Note that the PDP is already initialized by the PDPInitializer 
+		Subject subject = (Subject) session.getAttribute("subject");
+		puma.peputils.Object object = new puma.peputils.Object("");		
+		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
+		Action action = new Action("send");		
+		Environment environment = constructEnvironment();
+		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		// Enforce the decision
+		if(!authorized) {
+			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
+			return "redirect:/docs";
+		}
+		model.addAttribute("tenants", this.tenantService.findAll());
 		return "documents/create-document";
 	}
 
@@ -63,20 +82,30 @@ public class DocumentController {
 	public String createDocumentImplementation(ModelMap model,
 			@RequestParam("name") String name,
 			@RequestParam("destination") String destination, HttpSession session) {
-		// TODO first check whether the subject can create new Documents 
-		// (not security here, but usability)
-		
 		// Create the Document
 		String origin = (String) session.getAttribute("user_email");
 		String creatingTenant = (String) session.getAttribute("user_tenant");
 		Document doc = new Document(name, origin, destination, creatingTenant);
-		docService.addDocument(doc);
-		Long newId = doc.getId();
-		MessageManager.getInstance().addMessage(session, "success", "Document successfully created.");
 		
+		// Check whether the current user is allowed to send the document
+		// Note that the PDP is already initialized by the PDPInitializer 
+		Subject subject = (Subject) session.getAttribute("subject");
+		puma.peputils.Object object = constructAuthzObject(doc);		
+		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
+		Action action = new Action("send");		
+		Environment environment = constructEnvironment();
+		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		// Enforce the decision
+		if(!authorized) {
+			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
+			return "redirect:/docs";
+		} else {
+			docService.addDocument(doc);
+			Long newId = doc.getId();
+			MessageManager.getInstance().addMessage(session, "success", "Document successfully created.");
+			return "redirect:/docs/" + newId;
+		}
 		// TODO create the entity in de PUMA PIPs
-		
-		return "redirect:/docs/" + newId;
 	}
 
 	@RequestMapping("/docs/{docId}")
@@ -152,8 +181,8 @@ public class DocumentController {
 		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
 		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
 		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
-		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant())); //TODO
-		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", "TODO")); //TODO
+		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant()));
+		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", doc.getDestination())); 
 		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf")); // TODO
 		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));
 		object.addAttributeValue(new ObjectAttributeValue("destination", doc.getDestination()));

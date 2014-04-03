@@ -17,6 +17,8 @@
 
 	<!-- CHANGE THIS TO YOUR PACKAGE -->
 	<context:component-scan base-package="puma.application.webapp" />
+	<context:component-scan base-package="puma.sp.mgmt.repositories" />
+	<context:component-scan base-package="puma.sp.mgmt.model" />
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -25,11 +27,12 @@
 	</bean>
 
 	<jpa:repositories base-package="puma.application.webapp" />
+	<jpa:repositories base-package="puma.sp.mgmt.repositories" />
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
 <!-- 		<property name="persistenceUnitName" value="hsqldbUnit" /> -->
-		<property name="persistenceUnitName" value="mysqlUnit" />
+		<property name="persistenceUnitName" value="mysqlPumaUnit" />
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

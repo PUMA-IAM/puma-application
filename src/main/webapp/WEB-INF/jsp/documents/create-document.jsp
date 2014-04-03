@@ -8,7 +8,7 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h1 class="page-header">Create document</h1>
+			<h1 class="page-header">Send document</h1>
 		</div>
 	</div>
 
@@ -25,8 +25,13 @@
 				<div class="form-group">
 					<label for="inputEmail3" class="col-sm-2 control-label">To</label>
 					<div class="col-sm-10">
-						<input name="destination" class="form-control" id="input-to"
-							placeholder="Email">
+						<!-- <input name="destination" class="form-control" id="input-to"
+							placeholder="Email"> -->
+						<select name="destination" class="form-control">
+							<c:forEach items="${tenants}" var="tenant">
+								<option value="${tenant.id}">${tenant.name}</option>
+							</c:forEach>
+						</select>
 					</div>
 				</div>
 				<div class="form-group">
@@ -38,7 +43,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-10">
-						<button type="submit" class="btn btn-default">Create</button>
+						<button type="submit" class="btn btn-default">Send</button>
 					</div>
 				</div>
 			</form>

@@ -15,7 +15,8 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "documentsByDestination", query = "SELECT doc FROM Document doc WHERE doc.destination = :destination"),
-	@NamedQuery(name = "documentsByOrigin", query = "SELECT doc FROM Document doc WHERE doc.origin = :origin")
+	@NamedQuery(name = "documentsByOrigin", query = "SELECT doc FROM Document doc WHERE doc.origin = :origin"),
+	@NamedQuery(name = "documentsByCreatingTenant", query = "SELECT doc FROM Document doc WHERE doc.creatingTenant = :creatingTenant")
 })
 public class Document {
 
@@ -99,6 +100,17 @@ public class Document {
 		this.destination = destination;
 		this.creatingTenant = creatingTenant;
 		this.date = new Date();
+	}
+	
+	/**
+	 * Other
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Document))
+			return false;
+		Document doc = (Document) other;
+		return doc.getId().equals(this.getId());
 	}
 
 }

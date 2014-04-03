@@ -26,33 +26,30 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-md-4">
-			<h2>Heading</h2>
-			<p>Donec id elit non mi porta gravida at eget metus. Fusce
-				dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
-				ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
-				magna mollis euismod. Donec sed odio dui.</p>
+			<h2>Upload</h2>
+			<p>Your documents can be uploaded to the document management application. 
+			eDocs Inc. provides a back-up service for its tenants. 
+			We have different service package offerings.</p>
 			<p>
 				<a class="btn btn-default" href="#" role="button">View details
 					&raquo;</a>
 			</p>
 		</div>
 		<div class="col-md-4">
-			<h2>Heading</h2>
-			<p>Donec id elit non mi porta gravida at eget metus. Fusce
-				dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
-				ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
-				magna mollis euismod. Donec sed odio dui.</p>
+			<h2>Manage</h2>
+			<p>The eDocs document management platform supports easy management for the 
+			documents that in the system. We provide functionality that enables you to
+			manage your documents as you want to.</p>
 			<p>
 				<a class="btn btn-default" href="#" role="button">View details
 					&raquo;</a>
 			</p>
 		</div>
 		<div class="col-md-4">
-			<h2>Heading</h2>
-			<p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in,
-				egestas eget quam. Vestibulum id ligula porta felis euismod semper.
-				Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum
-				nibh, ut fermentum massa justo sit amet risus.</p>
+			<h2>Send</h2>
+			<p>Share your documents with other organizations. The eDocs document management
+			platform allows you to send the documents that you uploaded to other organizations,
+			without necessarily knowing the precise person that you want to send to. </p>
 			<p>
 				<a class="btn btn-default" href="#" role="button">View details
 					&raquo;</a>

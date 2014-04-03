@@ -61,12 +61,18 @@ public class AuthenticationController {
 			@RequestParam(value = "Name", defaultValue = "") String name,
 			@RequestParam(value = "Email", defaultValue = "") String email,
 			@RequestParam(value = "Tenant", defaultValue = "") String tenant,
-			@RequestParam(value = "Role", defaultValue = "") String[] roles, HttpSession session) {
+			@RequestParam(value = "Token", defaultValue = "") String token,
+			@RequestParam(value = "Role", defaultValue = "") String[] roles, 
+			@RequestParam(value = "Manages", defaultValue = "") String[] manages, HttpSession session) {
 		// set the application attributes
-		session.setAttribute("user_name", name); 
 		session.setAttribute("user_id", id);
-		session.setAttribute("user_email", email);
+		session.setAttribute("user_name", name); 
+		if (!email.isEmpty())
+			session.setAttribute("user_email", email);
+		else
+			session.setAttribute("user_email", id);
 		session.setAttribute("user_tenant", tenant);
+		session.setAttribute("user_token", token);
 		// store the authorization subject
 		Subject subject = new Subject(id);
 		if (roles != null && roles.length > 0) {
@@ -75,6 +81,12 @@ public class AuthenticationController {
 				rolesAttr.addValue(r);
 			}
 			subject.addAttributeValue(rolesAttr);
+		}
+		if (manages != null && manages.length > 0) {
+			SubjectAttributeValue assignedAttr = new SubjectAttributeValue("assigned");
+			for (String n: Arrays.asList(manages))
+				assignedAttr.addValue(n);
+			subject.addAttributeValue(assignedAttr);
 		}
 		subject.addAttributeValue(new SubjectAttributeValue("tenant", tenant));
 		subject.addAttributeValue(new SubjectAttributeValue("email", email));

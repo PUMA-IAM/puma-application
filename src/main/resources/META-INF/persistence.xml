@@ -23,4 +23,29 @@
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 		</properties>
 	</persistence-unit>
+	<persistence-unit name="mysqlPumaUnit" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>puma.sp.mgmt.model.organization.Tenant</class>
+		<class>puma.sp.mgmt.model.organization.TenantMgmtType</class>
+		<class>puma.sp.mgmt.model.organization.Organization</class>
+		<class>puma.sp.mgmt.model.attribute.Attribute</class>
+		<class>puma.sp.mgmt.model.attribute.AttributeFamily</class>
+		<class>puma.sp.mgmt.model.attribute.DataType</class>
+		<class>puma.sp.mgmt.model.attribute.Multiplicity</class>
+		<class>puma.sp.mgmt.model.user.User</class>
+		<class>puma.sp.mgmt.model.user.SessionRequest</class>
+		<class>puma.sp.mgmt.model.application.Service</class>
+		<class>puma.sp.mgmt.model.policy.Policy</class>
+		<class>puma.sp.mgmt.model.policy.PolicyType</class>
+		<class>puma.sp.mgmt.model.user.Group</class>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/puma-mgmt" />
+			<property name="javax.persistence.jdbc.user" value="root" />
+			<property name="javax.persistence.jdbc.password" value="root" />
+			<property name="hibernate.archive.autodetection" value="class, hbm"/>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
+	</persistence-unit>
 </persistence>

@@ -168,6 +168,11 @@
 		<!-- <version>1.0-MR1</version> -->
 		<!-- </dependency> -->
 
+		<dependency>
+			<groupId>puma-service-mgmt</groupId>
+			<artifactId>puma-service-mgmt</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -67,7 +67,7 @@
 						<ul class="nav navbar-nav navbar-right">
 							<li class=""><a href="<c:url value="/docs"/>">View
 									documents</a></li>
-							<li class=""><a href="<c:url value="/docs/create"/>">Create
+							<li class=""><a href="<c:url value="/docs/create"/>">Send
 									document</a></li>
 							<li class="dropdown"><a href="#" class="dropdown-toggle"
 								data-toggle="dropdown">Hello, <c:out value="${user_name}" /> <b
