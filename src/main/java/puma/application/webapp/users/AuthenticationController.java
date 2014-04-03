@@ -61,7 +61,8 @@ public class AuthenticationController {
 			@RequestParam("UserId") String id,
 			@RequestParam(value = "Name", defaultValue = "") String name,
 			@RequestParam(value = "Email", defaultValue = "") String email,
-			@RequestParam(value = "Tenant", defaultValue = "") String tenant,
+			@RequestParam(value = "PrimaryTenant", defaultValue = "") String pTenant,
+			@RequestParam(value = "Tenant", defaultValue = "") String[] tenant,
 			@RequestParam(value = "Token", defaultValue = "") String token,
 			@RequestParam(value = "Role", defaultValue = "") String[] roles, 
 			@RequestParam(value = "Manages", defaultValue = "") String[] manages, HttpSession session) {
@@ -72,10 +73,19 @@ public class AuthenticationController {
 			session.setAttribute("user_email", email);
 		else
 			session.setAttribute("user_email", id);
-		session.setAttribute("user_tenant", tenant);
-		session.setAttribute("user_token", token);
-		// store the authorization subject
+		
 		Subject subject = new Subject(id);
+		
+		session.setAttribute("user_tenant", pTenant);
+		if (tenant != null && tenant.length > 0) {
+			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant");
+			for (String t: Arrays.asList(tenant))
+				tenantAttr.addValue(t);
+			subject.addAttributeValue(tenantAttr);
+		}
+		session.setAttribute("user_token", token);
+		
+		// store the authorization subject
 		if (roles != null && roles.length > 0) {
 			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
 			for (String r : Arrays.asList(roles)) {
@@ -89,7 +99,6 @@ public class AuthenticationController {
 				assignedAttr.addValue(n);
 			subject.addAttributeValue(assignedAttr);
 		}
-		subject.addAttributeValue(new SubjectAttributeValue("tenant", tenant));
 		subject.addAttributeValue(new SubjectAttributeValue("email", email));
 		session.setAttribute("subject", subject);
 		
