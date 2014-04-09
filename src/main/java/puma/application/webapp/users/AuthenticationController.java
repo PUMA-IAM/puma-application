@@ -2,19 +2,16 @@ package puma.application.webapp.users;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import puma.application.webapp.msgs.MessageManager;
 import puma.peputils.Subject;
 import puma.peputils.attributes.SubjectAttributeValue;
@@ -58,48 +55,47 @@ public class AuthenticationController {
 
 	@RequestMapping(value = "/user/login-callback")
 	public String loginCallback(ModelMap model,
-			@RequestParam("UserId") String id,
-			@RequestParam(value = "Name", defaultValue = "") String name,
-			@RequestParam(value = "Email", defaultValue = "") String email,
-			@RequestParam(value = "PrimaryTenant", defaultValue = "") String pTenant,
-			@RequestParam(value = "Tenant", defaultValue = "") String[] tenant,
-			@RequestParam(value = "Token", defaultValue = "") String token,
-			@RequestParam(value = "Role", defaultValue = "") String[] roles, 
-			@RequestParam(value = "Manages", defaultValue = "") String[] manages, HttpSession session) {
+			@RequestParam MultiValueMap<String, String> params, HttpSession session) {
 		// set the application attributes
-		session.setAttribute("user_id", id);
-		session.setAttribute("user_name", name); 
-		if (!email.isEmpty())
-			session.setAttribute("user_email", email);
+		if (!params.containsKey("UserId"))
+			throw new RuntimeException("No user id was given");
+		session.setAttribute("user_id", params.get("UserId").get(0));
+		if (!params.containsKey("Name"))
+			throw new RuntimeException("No user name given");
+		session.setAttribute("user_name", params.get("Name").get(0)); 
+		if (params.containsKey("Email"))
+			session.setAttribute("user_email", params.get("Email").get(0));
 		else
-			session.setAttribute("user_email", id);
+			session.setAttribute("user_email", params.get("UserId").get(0));
 		
-		Subject subject = new Subject(id);
-		
-		session.setAttribute("user_tenant", pTenant);
-		if (tenant != null && tenant.length > 0) {
+		Subject subject = new Subject(params.get("UserId").get(0));
+		if (!params.containsKey("PrimaryTenant"))
+			throw new RuntimeException("No tenant given for user " + session.getAttribute("Name"));
+		session.setAttribute("user_tenant", params.get("PrimaryTenant").get(0));
+		if (params.containsKey("Tenant") && params.get("Tenant").size() > 0) {
 			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant");
-			for (String t: Arrays.asList(tenant))
+			for (String t: params.get("Tenant"))
 				tenantAttr.addValue(t);
 			subject.addAttributeValue(tenantAttr);
 		}
-		session.setAttribute("user_token", token);
+		if (params.containsKey("Token"))
+			session.setAttribute("user_token", params.get("Token").get(0));
 		
 		// store the authorization subject
-		if (roles != null && roles.length > 0) {
+		if (params.containsKey("Role") && params.get("Role").size() > 0) {
 			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
-			for (String r : Arrays.asList(roles)) {
+			for (String r : params.get("Role")) {
 				rolesAttr.addValue(r);
 			}
 			subject.addAttributeValue(rolesAttr);
 		}
-		if (manages != null && manages.length > 0) {
+		if (params.containsKey("Manages") && params.get("Manages").size() > 0) {
 			SubjectAttributeValue assignedAttr = new SubjectAttributeValue("assigned");
-			for (String n: Arrays.asList(manages))
+			for (String n: params.get("Manages"))
 				assignedAttr.addValue(n);
 			subject.addAttributeValue(assignedAttr);
 		}
-		subject.addAttributeValue(new SubjectAttributeValue("email", email));
+		subject.addAttributeValue(new SubjectAttributeValue("email", (String) session.getAttribute("user_email")));
 		session.setAttribute("subject", subject);
 		
 //		String output = "UserId=" + id + ", Name=" + name + ", Email=" + email + ", Tenant=" + tenant + ", Role=[";
@@ -111,7 +107,7 @@ public class AuthenticationController {
 //		return "test";
 
 		MessageManager.getInstance().addMessage(session, "success",
-				"Welcome back, " + name);
+				"Welcome back, " + (String) session.getAttribute("user_name"));
 		return "redirect:/docs";
 	}
 
