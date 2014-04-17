@@ -97,14 +97,6 @@ public class AuthenticationController {
 		}
 		subject.addAttributeValue(new SubjectAttributeValue("email", (String) session.getAttribute("user_email")));
 		session.setAttribute("subject", subject);
-		
-//		String output = "UserId=" + id + ", Name=" + name + ", Email=" + email + ", Tenant=" + tenant + ", Role=[";
-//		for(String r : Arrays.asList(roles)) {
-//			output += r + ", ";
-//		}
-//		output += "]";
-//		model.addAttribute("output", output);
-//		return "test";
 
 		MessageManager.getInstance().addMessage(session, "success",
 				"Welcome back, " + (String) session.getAttribute("user_name"));

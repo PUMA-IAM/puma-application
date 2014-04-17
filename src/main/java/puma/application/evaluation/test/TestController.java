@@ -1,4 +1,4 @@
-package puma.application.webapp.test;
+package puma.application.evaluation.test;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
