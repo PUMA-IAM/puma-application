@@ -1,4 +1,4 @@
-package puma.application.webapp.metrics;
+package puma.application.evaluation.metrics;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +23,10 @@ public class MetricsController {
 		} catch (JsonProcessingException e) {
 			return e.getMessage();
 		}
+	}
+	
+	@RequestMapping(value = "/metrics/clear", method = RequestMethod.GET)
+	public @ResponseBody void clear() {
+		TimerFactory.getInstance().resetAllTimers();
 	}
 }
