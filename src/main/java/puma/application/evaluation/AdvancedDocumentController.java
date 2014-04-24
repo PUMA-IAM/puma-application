@@ -57,6 +57,13 @@ public class AdvancedDocumentController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "/removeAllDocuments", method = RequestMethod.GET)
+	public void removeAll() {
+		for (Document next: this.docService.getAllDocuments())
+			this.docService.deleteDocument(next.getId());
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/removeDocument", method = RequestMethod.GET)
 	public String removeDocument(@RequestParam("id") Long id) {
 		Document d = this.docService.getDocumentById(id);
