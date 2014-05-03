@@ -10,6 +10,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
@@ -39,6 +40,7 @@ public class PDPInitializer implements ServletContextListener {
 			.getName());
 
 	private static final String POLICY_PROPERTY = "puma.application.policydir";
+	private static final String SILENT_MODE_PROPERTY = "puma.application.silent"; 
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -92,6 +94,14 @@ public class PDPInitializer implements ServletContextListener {
 				}
 			});
 			thread.start();
+		}
+		Boolean silent = false;
+		if (System.getProperty(SILENT_MODE_PROPERTY) != null) {
+			silent = Boolean.parseBoolean(System.getProperty(SILENT_MODE_PROPERTY));
+		}
+		if (silent) {
+			logger.log(Level.INFO, "Now switching to silent mode");
+			LogManager.getLogManager().reset();			
 		}
 	}
 
