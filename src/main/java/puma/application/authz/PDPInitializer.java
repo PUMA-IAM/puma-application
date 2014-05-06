@@ -101,7 +101,8 @@ public class PDPInitializer implements ServletContextListener {
 		}
 		if (silent) {
 			logger.log(Level.INFO, "Now switching to silent mode");
-			LogManager.getLogManager().reset();			
+			LogManager.getLogManager().getLogger("").setLevel(Level.WARNING);
+			//LogManager.getLogManager().reset();			
 		}
 	}
 
