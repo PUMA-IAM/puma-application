@@ -31,13 +31,18 @@ public class MetricsController {
 		}
 	}
 	
+	GraphiteReporter reporter = null;
+	
 	@RequestMapping(value = "/metrics/clear", method = RequestMethod.GET)
 	public @ResponseBody void clear() {
 		TimerFactory.getInstance().resetAllTimers();
 		
 		// connect metrics to the Graphite server
+		if(reporter != null) {
+			reporter.stop();
+		}
 		final Graphite graphite = new Graphite(new InetSocketAddress("172.16.4.2", 2003));
-		final GraphiteReporter reporter = GraphiteReporter.forRegistry(TimerFactory.getInstance().getMetricRegistry())
+		reporter = GraphiteReporter.forRegistry(TimerFactory.getInstance().getMetricRegistry())
 		                                                  .prefixedWith("puma-application")
 		                                                  .convertRatesTo(TimeUnit.SECONDS)
 		                                                  .convertDurationsTo(TimeUnit.MILLISECONDS)
