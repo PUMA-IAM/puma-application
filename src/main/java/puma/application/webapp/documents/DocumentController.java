@@ -21,6 +21,7 @@ package puma.application.webapp.documents;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import puma.application.webapp.msgs.MessageManager;
-import puma.applicationpdp.ApplicationPEP;
-import puma.peputils.Action;
-import puma.peputils.Environment;
-import puma.peputils.Subject;
-import puma.peputils.attributes.EnvironmentAttributeValue;
-import puma.peputils.attributes.ObjectAttributeValue;
 import puma.sp.mgmt.repositories.organization.TenantService;
 
 @Controller
 public class DocumentController {
+
+	private static final String AUTHZ_DECISION_ID = "AuthorizationDecision";
 
 	@Autowired
 	private DocumentService docService;
@@ -79,17 +76,11 @@ public class DocumentController {
 	}
 
 	@RequestMapping(value = "/docs/create", method = RequestMethod.GET)
-	public String createDocument(ModelMap model, HttpSession session) {
+	public String createDocument(ModelMap model, HttpSession session, HttpServletRequest request) {
 		// Check whether the current user is allowed to send the document
 		// Note that the PDP is already initialized by the PDPInitializer 
-		Subject subject = (Subject) session.getAttribute("subject");
-		puma.peputils.Object object = new puma.peputils.Object("");		
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
-		Action action = new Action("send");		
-		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
 		// Enforce the decision
-		if(!authorized) {
+		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
 			return "redirect:/docs";
 		}
@@ -98,7 +89,7 @@ public class DocumentController {
 	}
 
 	@RequestMapping(value = "/docs/create-impl", method = RequestMethod.POST)
-	public String createDocumentImplementation(ModelMap model,
+	public String createDocumentImplementation(ModelMap model, HttpServletRequest request,
 			@RequestParam("name") String name,
 			@RequestParam("destination") String destination, HttpSession session) {
 		// Create the Document
@@ -107,15 +98,9 @@ public class DocumentController {
 		Document doc = new Document(name, origin, destination, creatingTenant);
 		
 		// Check whether the current user is allowed to send the document
-		// Note that the PDP is already initialized by the PDPInitializer 
-		Subject subject = (Subject) session.getAttribute("subject");
-		puma.peputils.Object object = constructAuthzObject(doc);		
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
-		Action action = new Action("send");		
-		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		// Note that the PDP is already initialized by the PDPInitializer
 		// Enforce the decision
-		if(!authorized) {
+		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
 			return "redirect:/docs";
 		} else {
@@ -128,7 +113,7 @@ public class DocumentController {
 	}
 
 	@RequestMapping("/docs/{docId}")
-	public String viewDocument(@PathVariable("docId") Long docId, ModelMap model, HttpSession session) {
+	public String viewDocument(@PathVariable("docId") Long docId, ModelMap model, HttpSession session, HttpServletRequest request) {
 		Document doc = docService.getDocumentById(docId);
 		
 		// 1. First, check whether the document exists
@@ -139,13 +124,8 @@ public class DocumentController {
 		
 		// 2. Then, check whether the current user is allowed to read the document
 		// Note that the PDP is already initialized by the PDPInitializer 
-		Subject subject = (Subject) session.getAttribute("subject");
-		puma.peputils.Object object = constructAuthzObject(doc);		
-		Action action = new Action("read");		
-		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
 		// Enforce the decision
-		if(!authorized) {
+		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to access document #" + doc.getId());
 			return "redirect:/docs";
 		}
@@ -157,7 +137,7 @@ public class DocumentController {
 	}
 
 	@RequestMapping("/docs/{docId}/delete")
-	public String deleteDocument(@PathVariable("docId") Long docId, HttpSession session) {
+	public String deleteDocument(@PathVariable("docId") Long docId, HttpSession session, HttpServletRequest request) {
 		Document doc = docService.getDocumentById(docId);
 
 		// 1. First, check whether the document exists
@@ -168,13 +148,8 @@ public class DocumentController {
 		
 		// 2. Then, check whether the user is allowed to delete the document
 		// Note that the PDP is already initialized by the PDPInitializer 
-		Subject subject = (Subject) session.getAttribute("subject");
-		puma.peputils.Object object = constructAuthzObject(doc);		
-		Action action = new Action("delete");		
-		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
 		// Enforce the decision
-		if(!authorized) {
+		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to delete document #" + doc.getId());
 			return "redirect:/docs";
 		}
@@ -187,34 +162,5 @@ public class DocumentController {
 		// 3.2 Delete the document entity in PUMA PIPs as well TODO
 		
 		return "redirect:/docs";
-	}
-	
-	/**
-	 * Helper function for converting a Document to an authorization Object.
-	 * 
-	 * @param doc
-	 * @return
-	 */
-	private puma.peputils.Object constructAuthzObject(Document doc) {
-		puma.peputils.Object object = new puma.peputils.Object("" + doc.getId());
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
-		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
-		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
-		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant()));
-		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", doc.getDestination())); 
-		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf")); // TODO
-		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));
-		object.addAttributeValue(new ObjectAttributeValue("destination", doc.getDestination()));
-		return object;
-	}
-	
-	/**
-	 * Helper function to construct the authorization Environment.
-	 */
-	private Environment constructEnvironment() {
-		Environment environment = new Environment();
-		environment.addAttributeValue(new EnvironmentAttributeValue("system-status", "overload")); // TODO add something useful here?
-		environment.addAttributeValue(new EnvironmentAttributeValue("system-load", 90)); // TODO add something useful here?
-		return environment;		
 	}
 }
