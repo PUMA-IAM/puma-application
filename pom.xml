@@ -82,11 +82,14 @@
 			<version>1.2.0.RELEASE</version>
 		</dependency>
 
+		<!-- @Maarten: dit gaf bij mij een exception? Gelijkaardig aan dit: http://stackoverflow.com/questions/20994585/no-persistence-provider-for-entitymanager-with-javase-app
+				Kijk jij eens of dit nodig is om het bij u te deployen?
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
 			<version>1.0.0.Final</version>
 		</dependency>
+		-->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>

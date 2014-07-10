@@ -108,15 +108,20 @@ public class PDPInitializer implements ServletContextListener {
 
 	private void initializeProperties(ServletContextEvent e) {
 		String subPath = "WEB-INF/.properties";
-		File propertiesFile = new File(e.getServletContext().getRealPath(subPath));
+		File propertiesFile = null; 
+		if (e.getServletContext().getRealPath(subPath) != null)
+			propertiesFile = new File(e.getServletContext().getRealPath(subPath));			
 		try {
 			Properties p = new Properties();
-			if (propertiesFile.exists()) {
+			if (propertiesFile != null && propertiesFile.exists()) {
 				logger.info("Fetching properties from " + propertiesFile);
 				p.load(new FileInputStream(e.getServletContext().getRealPath(subPath)));
 				System.setProperty(POLICY_PROPERTY, p.getProperty(POLICY_PROPERTY));
 			} else {
-				logger.warning("Properties file not found at " + propertiesFile.getAbsolutePath());
+				String path = "[]";
+				if (propertiesFile != null)
+					path = propertiesFile.getAbsolutePath();
+				logger.warning("Properties file not found at " + path);
 			}
 		} catch (FileNotFoundException e1) {
 			logger.warning("File not found at " + propertiesFile.getAbsolutePath());
