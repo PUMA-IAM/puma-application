@@ -21,8 +21,10 @@ package puma.application.webapp.users;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
@@ -31,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import puma.application.authz.DocumentErrorReporter;
 import puma.application.webapp.msgs.MessageManager;
 import puma.peputils.Subject;
 import puma.peputils.attributes.SubjectAttributeValue;
@@ -115,8 +119,9 @@ public class AuthenticationController {
 			subject.addAttributeValue(assignedAttr);
 		}
 		subject.addAttributeValue(new SubjectAttributeValue("email", (String) session.getAttribute("user_email")));
-		session.setAttribute("subject", subject);
-
+		session.setAttribute("user", subject);
+		session.setAttribute("subject", subject); // DEBUG this still neccessary?
+		session.setAttribute("ErrorReporterIdentifier", new DocumentErrorReporter(session));
 		MessageManager.getInstance().addMessage(session, "success",
 				"Welcome back, " + (String) session.getAttribute("user_name"));
 		return "redirect:/docs";

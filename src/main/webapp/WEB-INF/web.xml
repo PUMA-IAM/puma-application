@@ -14,42 +14,121 @@
 		<servlet-name>mvc-dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-  
-  	<!-- JASPER'S SERVLETS -->
-  
-<!--     <servlet> -->
-<!--         <servlet-name>ActionServlet</servlet-name> -->
-<!--         <servlet-class>be.kuleuven.cs.projects.samples.up.document_sending_service.servlets.AccessControlCommunicationServlet</servlet-class> -->
-<!--     </servlet> -->
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>ActionServlet</servlet-name> -->
-<!--         <url-pattern>/ActionServlet</url-pattern> -->
-<!--     </servlet-mapping> -->
-<!--     <servlet> -->
-<!--         <servlet-name>ActionReplyServlet</servlet-name> -->
-<!--         <servlet-class>be.kuleuven.cs.projects.samples.up.document_sending_service.servlets.AccessControlCommunicationReplyServlet</servlet-class> -->
-<!--     </servlet> -->
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>ActionReplyServlet</servlet-name> -->
-<!--         <url-pattern>/AccessControlCommunicationReplyServlet</url-pattern> -->
-<!--     </servlet-mapping> -->
-<!--     <servlet> -->
-<!--         <servlet-name>AuthorizationExampleServlet</servlet-name> -->
-<!--         <servlet-class>puma.application.authz.AuthorizationExample</servlet-class> -->
-<!--     </servlet> -->
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>AuthorizationExampleServlet</servlet-name> -->
-<!--         <url-pattern>/authz-example</url-pattern> -->
-<!--     </servlet-mapping> -->
-    
-    <!-- PDP INITIALIZER -->
+	
     
     <listener>
     	<listener-class>puma.application.authz.PDPInitializer</listener-class>
     </listener>
     
+    
     <listener>
     	<listener-class>puma.application.authz.DriverDeregistrator</listener-class>
     </listener>
     
+    <!-- PEP configuration -->
+    <filter>
+    	<description>The access filter intercepts every request and makes sure that the authorization is handled accordingly</description>
+    	<filter-name>accessServlet</filter-name>
+    	<filter-class>peglio.modules.instrumentation.AccessFilter</filter-class>
+    	<init-param>
+	    	<description>Specifies the FQN of the AuthorizationFactory instance that will be used to build the requests to the PEP</description>
+	    	<param-name>AuthorizationFactory</param-name>
+	    	<param-value>puma.application.authz.DocumentAuthzFactoryImpl</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The location of the file specifying the application model</description>
+	    	<param-name>ModelFile</param-name>
+	    	<param-value>/home/jasper/projects/Peglio/src/main/resources/inputs/examples/puma/application.pg</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The location of the file specifying the mapping of the model onto the authorization requests</description>
+	    	<param-name>MappingFile</param-name>
+	    	<param-value>/home/jasper/projects/Peglio/src/main/resources/inputs/examples/puma/mapping.pg</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>Identifier for the designated error reporter for the subject which should be stored in his/her/its session under this identifier. This reporter will be utilized to customize the reporting of the authorization decision to the subject.</description>
+	    	<param-name>ErrorReporterIdentifier</param-name>
+	    	<param-value>ErrorReporterIdentifier </param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The id which identifies the subject upon each request (and which is included as session attribute or parameter at each request). Note that this identifier will be neglected if a default subject instance is specified in the mapping file and if that instance is found when the request is made.</description>
+	    	<param-name>SubjectIdentifier</param-name>
+	    	<param-value>userIdentifier</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The id which identifies the objects upon each request. This will be used to build the authorization Object instance that will be sent to the PEP.</description>
+	    	<param-name>ObjectIdentifier</param-name>
+	    	<param-value>docId</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The id which identifies the actions. This will mostly be used internally, and is used to retrieve this information at request time. This will be used to build the authorization Action instance that will be sent to the PEP.</description>
+	    	<param-name>ActionIdentifier</param-name>
+	    	<param-value>actionIdentifier</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The attribute which will specify the last authorization decision. This can be used to customize some behavior in the controller if required.</description>
+	    	<param-name>AuthorizationDecisionIdentifier</param-name>
+	    	<param-value>AuthzDecision</param-value>
+	    </init-param>
+	    <init-param>
+	    	<description>The URL at which to contact the PDP. The PEP will use this URL to send its requests to.</description>
+	    	<param-name>PDP</param-name>
+	    	<param-value>http://localhost:8080/pdp</param-value>
+	    </init-param>
+    </filter>
+    <filter-mapping>
+    	<filter-name>accessServlet</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <listener>
+    	<listener-class>peglio.modules.instrumentation.spring.PEPInitializationServlet</listener-class>
+    </listener>
+    <context-param>
+    	<description>A list of packages, delimited by a new line, on which to search for @Controller classes</description>
+    	<param-name>Protect</param-name>
+    	<param-value>
+    		puma.application.webapp
+    	</param-value>
+    </context-param>
+    <context-param>
+    	<description>Specifies the FQN of the AuthorizationFactory instance that will be used to build the requests to the PEP</description>
+    	<param-name>AuthorizationFactory</param-name>
+    	<param-value>peglio.modules.instrumentation.prototypes.AuthorizationFactoryImpl</param-value>
+    </context-param>
+    <context-param>
+    	<description>The location of the file specifying the application model</description>
+    	<param-name>ModelFile</param-name>
+    	<param-value>/home/jasper/projects/Peglio/src/main/resources/inputs/examples/puma/application.pg</param-value>
+    </context-param>
+    <context-param>
+    	<description>The location of the file specifying the mapping of the model onto the authorization requests</description>
+    	<param-name>MappingFile</param-name>
+    	<param-value>/home/jasper/projects/Peglio/src/main/resources/inputs/examples/puma/mapping.pg</param-value>
+    </context-param>
+    <context-param>
+    	<description>The id which identifies the subject upon each request (and which is included as session attribute or parameter at each request). Note that this identifier will be neglected if a default subject instance is specified in the mapping file and if that instance is found when the request is made.</description>
+    	<param-name>SubjectIdentifier</param-name>
+    	<param-value>userIdentifier</param-value>
+    </context-param>
+    <context-param>
+    	<description>The id which identifies the objects upon each request. This will be used to build the authorization Object instance that will be sent to the PEP.</description>
+    	<param-name>ObjectIdentifier</param-name>
+    	<param-value>docId</param-value>
+    </context-param>
+    <context-param>
+    	<description>The id which identifies the actions. This will mostly be used internally, and is used to retrieve this information at request time. This will be used to build the authorization Action instance that will be sent to the PEP.</description>
+    	<param-name>ActionIdentifier</param-name>
+    	<param-value>actionIdentifier</param-value>
+    </context-param>
+    <context-param>
+    	<description>The attribute which will specify the last authorization decision. This can be used to customize some behavior in the controller if required.</description>
+    	<param-name>AuthorizationDecisionIdentifier</param-name>
+    	<param-value>AuthzDecision</param-value>
+    </context-param>
+    <context-param>
+    	<description>The URL at which to contact the PDP. The PEP will use this URL to send its requests to.</description>
+    	<param-name>PDP</param-name>
+    	<param-value>http://localhost:8080/pdp</param-value>
+    </context-param>
 </web-app>

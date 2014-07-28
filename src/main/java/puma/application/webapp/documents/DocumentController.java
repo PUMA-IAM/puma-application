@@ -32,13 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import peglio.modules.instrumentation.prototypes.convertors.LongToIntegerConvertor;
+import peglio.modules.instrumentation.spring.annotation.AccessMapping;
+import peglio.modules.instrumentation.spring.annotation.AccessParam;
 import puma.application.webapp.msgs.MessageManager;
 import puma.sp.mgmt.repositories.organization.TenantService;
 
 @Controller
 public class DocumentController {
-
-	private static final String AUTHZ_DECISION_ID = "AuthorizationDecision";
 
 	@Autowired
 	private DocumentService docService;
@@ -46,6 +47,7 @@ public class DocumentController {
 	@Autowired
 	private TenantService tenantService;
 
+	//@AccessMapping(to = "Document.List", redirectTo="/", message="You are not permitted to see any documents")
 	@RequestMapping(value = "/docs", method = RequestMethod.GET)
 	public String listDocuments(ModelMap model, HttpSession session) {
 		String userTenant = (String) session.getAttribute("user_tenant");
@@ -59,39 +61,20 @@ public class DocumentController {
 		model.addAttribute("sentDocuments", sentDocuments);
 		model.addAttribute("msgs", MessageManager.getInstance().getMessages(session));
 		return "documents/list-documents";
-		
-//		String sent = "Sent = [ ";
-//		for(Document doc: sentDocuments) {
-//			sent += doc.getName() + " ";
-//		}
-//		sent += " ] ";
-//		
-//		String received = "Received = [ ";
-//		for(Document doc: receivedDocuments) {
-//			received += doc.getName() + " ";
-//		}
-//		received += " ] ";
-//		model.addAttribute("output", received + "   " + sent);
-//		return "test";
 	}
 
+	@AccessMapping(to = "Document.Write", redirectTo="/docs/", message="You are not permitted to create documents")
 	@RequestMapping(value = "/docs/create", method = RequestMethod.GET)
 	public String createDocument(ModelMap model, HttpSession session, HttpServletRequest request) {
-		// Check whether the current user is allowed to send the document
-		// Note that the PDP is already initialized by the PDPInitializer 
-		// Enforce the decision
-		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
-			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
-			return "redirect:/docs";
-		}
 		model.addAttribute("tenants", this.tenantService.findAll());
 		return "documents/create-document";
 	}
 
+	@AccessMapping(to = "Document.Create", redirectTo="/docs/", message="You are not permitted to create this document")
 	@RequestMapping(value = "/docs/create-impl", method = RequestMethod.POST)
 	public String createDocumentImplementation(ModelMap model, HttpServletRequest request,
-			@RequestParam("name") String name,
-			@RequestParam("destination") String destination, HttpSession session) {
+			@RequestParam("name") @AccessParam("object.name") String name,
+			@RequestParam("destination") @AccessParam("object.destination") String destination, HttpSession session) {
 		// Create the Document
 		String origin = (String) session.getAttribute("user_email");
 		String creatingTenant = (String) session.getAttribute("user_tenant");
@@ -99,21 +82,19 @@ public class DocumentController {
 		
 		// Check whether the current user is allowed to send the document
 		// Note that the PDP is already initialized by the PDPInitializer
+		// (Peglio) 
+		
 		// Enforce the decision
-		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
-			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
-			return "redirect:/docs";
-		} else {
-			docService.addDocument(doc);
-			Long newId = doc.getId();
-			MessageManager.getInstance().addMessage(session, "success", "Document successfully created.");
-			return "redirect:/docs/" + newId;
-		}
+		docService.addDocument(doc);
+		Long newId = doc.getId();
+		MessageManager.getInstance().addMessage(session, "success", "Document successfully created.");
+		return "redirect:/docs/" + newId;
 		// TODO create the entity in de PUMA PIPs
 	}
 
+	@AccessMapping(to = "Document.Read", redirectTo="/docs/", message="You are not permitted to read this document")
 	@RequestMapping("/docs/{docId}")
-	public String viewDocument(@PathVariable("docId") Long docId, ModelMap model, HttpSession session, HttpServletRequest request) {
+	public String viewDocument(@PathVariable("docId") @AccessParam(value = "object.id", convertor=LongToIntegerConvertor.class) Long docId, ModelMap model, HttpSession session, HttpServletRequest request) {
 		Document doc = docService.getDocumentById(docId);
 		
 		// 1. First, check whether the document exists
@@ -125,10 +106,7 @@ public class DocumentController {
 		// 2. Then, check whether the current user is allowed to read the document
 		// Note that the PDP is already initialized by the PDPInitializer 
 		// Enforce the decision
-		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
-			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to access document #" + doc.getId());
-			return "redirect:/docs";
-		}
+		// (Peglio)
 		
 		// 3. Finally, if authorized, show the document
 		model.addAttribute("doc", doc);
@@ -136,8 +114,9 @@ public class DocumentController {
 		return "documents/view-document";
 	}
 
+	@AccessMapping(to = "Document.Delete", redirectTo="/docs/", message="You are not permitted to delete this document")
 	@RequestMapping("/docs/{docId}/delete")
-	public String deleteDocument(@PathVariable("docId") Long docId, HttpSession session, HttpServletRequest request) {
+	public String deleteDocument(@PathVariable("docId") @AccessParam(value = "object.id", convertor=LongToIntegerConvertor.class) Long docId, HttpSession session, HttpServletRequest request) {
 		Document doc = docService.getDocumentById(docId);
 
 		// 1. First, check whether the document exists
@@ -149,10 +128,7 @@ public class DocumentController {
 		// 2. Then, check whether the user is allowed to delete the document
 		// Note that the PDP is already initialized by the PDPInitializer 
 		// Enforce the decision
-		if(!((Boolean) request.getAttribute(AUTHZ_DECISION_ID))) {
-			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to delete document #" + doc.getId());
-			return "redirect:/docs";
-		}
+		// (Peglio)
 		
 		// 3. Finally, delete the document
 		// 3.1 Delete the document in the application

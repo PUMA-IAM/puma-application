@@ -42,6 +42,8 @@ import puma.peputils.attributes.SubjectAttributeValue;
  */
 public class AuthorizationExample extends HttpServlet {
 
+	private static final long serialVersionUID = -8996076121292945188L;
+
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// 0. The PDP is already initialized by the PDPInitializer 

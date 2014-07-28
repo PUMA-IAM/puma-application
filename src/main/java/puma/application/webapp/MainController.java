@@ -19,16 +19,21 @@
  ******************************************************************************/
 package puma.application.webapp;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import puma.application.webapp.msgs.MessageManager;
+
 @Controller
 public class MainController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(ModelMap model) {
+    public String index(ModelMap model, HttpSession session) {
+		model.addAttribute("msgs", MessageManager.getInstance().getMessages(session));
         return "index";
     }
 }

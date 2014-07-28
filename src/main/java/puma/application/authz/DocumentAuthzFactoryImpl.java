@@ -14,22 +14,37 @@
  *    limitations under the License.
  *    
  *    Administrative Contact: dnet-project-office@cs.kuleuven.be
- *    Technical Contact: maarten.decat@cs.kuleuven.be
- *    Author: maarten.decat@cs.kuleuven.be
+ *    Technical Contact: jasper.bogaerts@cs.kuleuven.be
+ *    Author: jasper.bogaerts@cs.kuleuven.be
  ******************************************************************************/
-package puma.application.webapp.users;
 
-import java.util.LinkedList;
+/**
+ * 
+ * @author Jasper Bogaerts
+ * @since Jul 24, 2014 1:38:28 PM
+ */
+package puma.application.authz;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import peglio.modules.instrumentation.prototypes.BasicAuthorizationFactory;
+import puma.applicationpdp.ApplicationPEP;
+import puma.peputils.PEP;
 
-public class CustomUserDetails extends User {
-	
-	private static final long serialVersionUID = -3060741620715693752L;
+/**
+ * @author Jasper Bogaerts
+ * @since Jul 24, 2014
+ *
+ */
+public class DocumentAuthzFactoryImpl extends BasicAuthorizationFactory {
 
-	public CustomUserDetails(String username, String password) {
-		super(username, password, true, true, true, true, new LinkedList<GrantedAuthority>());
+	/** 
+	 * {@inheritDoc}
+	 * @author Jasper Bogaerts
+	 * @since Jul 24, 2014
+	 * @see peglio.modules.instrumentation.util.AuthorizationFactory#buildPEP(java.lang.String)
+	 **/
+	@Override
+	public PEP buildPEP(String pdpContactURL) {
+		return ApplicationPEP.getInstance();
 	}
 
 }
