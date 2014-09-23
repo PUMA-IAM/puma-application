@@ -37,6 +37,7 @@ import puma.peputils.Action;
 import puma.peputils.Environment;
 import puma.peputils.Subject;
 import puma.peputils.attributes.EnvironmentAttributeValue;
+import puma.peputils.attributes.Multiplicity;
 import puma.peputils.attributes.ObjectAttributeValue;
 import puma.peputils.attributes.SubjectAttributeValue;
 import puma.sp.mgmt.model.attribute.Attribute;
@@ -102,8 +103,8 @@ public class AdvancedDocumentController {
 	@RequestMapping(value = "/accessDocument/{action}", method = RequestMethod.GET)
 	public String access(@PathVariable("action") String action, @RequestParam MultiValueMap<String, String> params) {
 		Environment env = new Environment();
-		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", false));
-		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", false));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", Multiplicity.ATOMIC, false));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", Multiplicity.ATOMIC, false));
 		return this.access(new Action(action), params, env);
 	}
 	
@@ -115,8 +116,8 @@ public class AdvancedDocumentController {
 	@RequestMapping(value = "/accessDocumentBetween7And19/{action}", method = RequestMethod.GET)
 	public String accessBetween7s(@PathVariable("action") String action, @RequestParam MultiValueMap<String, String> params) {
 		Environment env = new Environment();
-		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", true));
-		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", false));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", Multiplicity.ATOMIC, true));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", Multiplicity.ATOMIC, false));
 		return this.access(new Action(action), params, env);
 	}
 	
@@ -128,8 +129,8 @@ public class AdvancedDocumentController {
 	@RequestMapping(value = "/accessDocumentBetween20And25/{action}", method = RequestMethod.GET)
 	public String accessEndMonth(@PathVariable("action") String action, @RequestParam MultiValueMap<String, String> params) {
 		Environment env = new Environment();
-		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", false));
-		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", true));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", Multiplicity.ATOMIC, false));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", Multiplicity.ATOMIC, true));
 		return this.access(new Action(action), params, env);
 	}
 	
@@ -141,8 +142,8 @@ public class AdvancedDocumentController {
 	@RequestMapping(value = "/accessDocumentBetween7And19And20And25/{action}", method = RequestMethod.GET)
 	public String accessEndMonthBetween7s(@PathVariable("action") String action, @RequestParam MultiValueMap<String, String> params) {
 		Environment env = new Environment();
-		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", true));
-		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", true));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentTimeBetween7And19", Multiplicity.ATOMIC, true));
+		env.addAttributeValue(new EnvironmentAttributeValue("currentDateBetween20And25", Multiplicity.ATOMIC, true));
 		return this.access(new Action(action), params, env);
 	}
 	
@@ -173,21 +174,21 @@ public class AdvancedDocumentController {
 			id = "subject:" + key;
 		SubjectAttributeValue result = subject.getAttributeValue(id);
 		if (result == null)
-			subject.addAttributeValue(new SubjectAttributeValue(key, value));
+			subject.addAttributeValue(new SubjectAttributeValue(key, Multiplicity.ATOMIC, value)); // FIXME is this atomic or grouped? probably doesn't matter...
 		else
 			result.addValue(value);		
 	}
 	
 	private puma.peputils.Object constructAuthzObject(Document doc, MultiValueMap<String, String> params) {
 		puma.peputils.Object object = new puma.peputils.Object("" + doc.getId());
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
-		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
-		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
-		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant()));
+		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
+		object.addAttributeValue(new ObjectAttributeValue("name", Multiplicity.ATOMIC, doc.getName()));
+		object.addAttributeValue(new ObjectAttributeValue("sent-date", Multiplicity.ATOMIC, doc.getDate()));
+		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", Multiplicity.ATOMIC, doc.getCreatingTenant()));
 		//object.addAttributeValue(new ObjectAttributeValue("owning-tenant", doc.getDestination()));
-		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf"));
-		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));
-		object.addAttributeValue(new ObjectAttributeValue("destination", doc.getDestination()));
+		object.addAttributeValue(new ObjectAttributeValue("content", Multiplicity.ATOMIC, "TODO.pdf"));
+		object.addAttributeValue(new ObjectAttributeValue("origin", Multiplicity.ATOMIC, doc.getOrigin()));
+		object.addAttributeValue(new ObjectAttributeValue("destination", Multiplicity.ATOMIC, doc.getDestination()));
 		for (String nextKey: params.keySet())
 			for (String nextValue: params.get(nextKey))
 				addAttribute(object, nextKey, nextValue);
@@ -200,7 +201,7 @@ public class AdvancedDocumentController {
 			id = "object:" + key;
 		ObjectAttributeValue result = object.getAttributeValue(id);
 		if (result == null)
-			object.addAttributeValue(new ObjectAttributeValue(key, value));
+			object.addAttributeValue(new ObjectAttributeValue(key, Multiplicity.ATOMIC, value)); // FIXME is this atomic or grouped? probably doesn't matter...
 		else
 			result.addValue(value);
 	}

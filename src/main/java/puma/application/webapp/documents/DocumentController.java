@@ -37,6 +37,7 @@ import puma.peputils.Action;
 import puma.peputils.Environment;
 import puma.peputils.Subject;
 import puma.peputils.attributes.EnvironmentAttributeValue;
+import puma.peputils.attributes.Multiplicity;
 import puma.peputils.attributes.ObjectAttributeValue;
 import puma.sp.mgmt.repositories.organization.TenantService;
 
@@ -84,7 +85,7 @@ public class DocumentController {
 		// Note that the PDP is already initialized by the PDPInitializer 
 		Subject subject = (Subject) session.getAttribute("subject");
 		puma.peputils.Object object = new puma.peputils.Object("");		
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
+		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
 		Action action = new Action("send");		
 		Environment environment = constructEnvironment();
 		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
@@ -110,7 +111,7 @@ public class DocumentController {
 		// Note that the PDP is already initialized by the PDPInitializer 
 		Subject subject = (Subject) session.getAttribute("subject");
 		puma.peputils.Object object = constructAuthzObject(doc);		
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
+		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
 		Action action = new Action("send");		
 		Environment environment = constructEnvironment();
 		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
@@ -197,14 +198,14 @@ public class DocumentController {
 	 */
 	private puma.peputils.Object constructAuthzObject(Document doc) {
 		puma.peputils.Object object = new puma.peputils.Object("" + doc.getId());
-		object.addAttributeValue(new ObjectAttributeValue("type", "document"));
-		object.addAttributeValue(new ObjectAttributeValue("name", doc.getName()));
-		object.addAttributeValue(new ObjectAttributeValue("sent-date", doc.getDate()));
-		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", doc.getCreatingTenant()));
-		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", doc.getDestination())); 
-		object.addAttributeValue(new ObjectAttributeValue("content", "TODO.pdf")); // TODO
-		object.addAttributeValue(new ObjectAttributeValue("origin", doc.getOrigin()));
-		object.addAttributeValue(new ObjectAttributeValue("destination", doc.getDestination()));
+		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
+		object.addAttributeValue(new ObjectAttributeValue("name", Multiplicity.ATOMIC, doc.getName()));
+		object.addAttributeValue(new ObjectAttributeValue("sent-date", Multiplicity.ATOMIC, doc.getDate()));
+		object.addAttributeValue(new ObjectAttributeValue("creating-tenant", Multiplicity.ATOMIC, doc.getCreatingTenant()));
+		object.addAttributeValue(new ObjectAttributeValue("owning-tenant", Multiplicity.ATOMIC, doc.getDestination())); 
+		object.addAttributeValue(new ObjectAttributeValue("content", Multiplicity.ATOMIC, "TODO.pdf")); // TODO
+		object.addAttributeValue(new ObjectAttributeValue("origin", Multiplicity.ATOMIC, doc.getOrigin()));
+		object.addAttributeValue(new ObjectAttributeValue("destination", Multiplicity.ATOMIC, doc.getDestination()));
 		return object;
 	}
 	
@@ -213,8 +214,8 @@ public class DocumentController {
 	 */
 	private Environment constructEnvironment() {
 		Environment environment = new Environment();
-		environment.addAttributeValue(new EnvironmentAttributeValue("system-status", "overload")); // TODO add something useful here?
-		environment.addAttributeValue(new EnvironmentAttributeValue("system-load", 90)); // TODO add something useful here?
+		environment.addAttributeValue(new EnvironmentAttributeValue("system-status", Multiplicity.ATOMIC, "overload")); // TODO add something useful here?
+		environment.addAttributeValue(new EnvironmentAttributeValue("system-load", Multiplicity.ATOMIC, 90)); // TODO add something useful here?
 		return environment;		
 	}
 }

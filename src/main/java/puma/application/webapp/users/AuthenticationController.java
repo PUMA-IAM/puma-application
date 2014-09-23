@@ -21,8 +21,10 @@ package puma.application.webapp.users;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
@@ -31,8 +33,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import puma.application.webapp.msgs.MessageManager;
 import puma.peputils.Subject;
+import puma.peputils.attributes.Multiplicity;
 import puma.peputils.attributes.SubjectAttributeValue;
 
 @Controller
@@ -92,7 +96,7 @@ public class AuthenticationController {
 			throw new RuntimeException("No tenant given for user " + session.getAttribute("Name"));
 		session.setAttribute("user_tenant", params.get("PrimaryTenant").get(0));
 		if (params.containsKey("Tenant") && params.get("Tenant").size() > 0) {
-			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant");
+			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant", Multiplicity.GROUPED);
 			for (String t: params.get("Tenant"))
 				tenantAttr.addValue(t);
 			subject.addAttributeValue(tenantAttr);
@@ -102,19 +106,19 @@ public class AuthenticationController {
 		
 		// store the authorization subject
 		if (params.containsKey("Role") && params.get("Role").size() > 0) {
-			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles");
+			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles", Multiplicity.GROUPED);
 			for (String r : params.get("Role")) {
 				rolesAttr.addValue(r);
 			}
 			subject.addAttributeValue(rolesAttr);
 		}
 		if (params.containsKey("Manages") && params.get("Manages").size() > 0) {
-			SubjectAttributeValue assignedAttr = new SubjectAttributeValue("assigned");
+			SubjectAttributeValue assignedAttr = new SubjectAttributeValue("assigned", Multiplicity.GROUPED);
 			for (String n: params.get("Manages"))
 				assignedAttr.addValue(n);
 			subject.addAttributeValue(assignedAttr);
 		}
-		subject.addAttributeValue(new SubjectAttributeValue("email", (String) session.getAttribute("user_email")));
+		subject.addAttributeValue(new SubjectAttributeValue("email", Multiplicity.ATOMIC, (String) session.getAttribute("user_email")));
 		session.setAttribute("subject", subject);
 
 		MessageManager.getInstance().addMessage(session, "success",
