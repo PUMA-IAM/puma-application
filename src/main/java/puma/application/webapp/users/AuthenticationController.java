@@ -19,8 +19,13 @@
  ******************************************************************************/
 package puma.application.webapp.users;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,10 +39,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import puma.application.webapp.msgs.MessageManager;
 import puma.peputils.Subject;
 import puma.peputils.attributes.Multiplicity;
 import puma.peputils.attributes.SubjectAttributeValue;
+import puma.peputils.attributes.DataType;
+import puma.util.attributes.AttributeJSON;
 
 @Controller
 public class AuthenticationController {
@@ -83,9 +95,9 @@ public class AuthenticationController {
 		if (!params.containsKey("UserId"))
 			throw new RuntimeException("No user id was given");
 		session.setAttribute("user_id", params.get("UserId").get(0));
-		if (!params.containsKey("Name"))
+		/*if (!params.containsKey("Name"))
 			throw new RuntimeException("No user name given");
-		session.setAttribute("user_name", params.get("Name").get(0)); 
+		session.setAttribute("user_name", params.get("Name").get(0)); */
 		if (params.containsKey("Email"))
 			session.setAttribute("user_email", params.get("Email").get(0));
 		else
@@ -97,14 +109,14 @@ public class AuthenticationController {
 		session.setAttribute("user_tenant", params.get("PrimaryTenant").get(0));
 		if (params.containsKey("Tenant") && params.get("Tenant").size() > 0) {
 			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant", Multiplicity.GROUPED);
-			for (String t: params.get("Tenant"))
+			for (String t: params.get("Tenant").get(0).split(","))
 				tenantAttr.addValue(t);
 			subject.addAttributeValue(tenantAttr);
 		}
 		if (params.containsKey("Token"))
 			session.setAttribute("user_token", params.get("Token").get(0));
 		
-		// store the authorization subject
+		/*// store the authorization subject
 		if (params.containsKey("Role") && params.get("Role").size() > 0) {
 			SubjectAttributeValue rolesAttr = new SubjectAttributeValue("roles", Multiplicity.GROUPED);
 			for (String r : params.get("Role")) {
@@ -120,7 +132,55 @@ public class AuthenticationController {
 		}
 		subject.addAttributeValue(new SubjectAttributeValue("email", Multiplicity.ATOMIC, (String) session.getAttribute("user_email")));
 		session.setAttribute("subject", subject);
-
+*/
+		
+		
+		// add the real attributes to the subject
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			boolean nameFound = false;
+			List<AttributeJSON> attributes = mapper.readValue(params.get("attributes").get(0).toString(), new TypeReference<List<AttributeJSON>>(){});
+			for(AttributeJSON a : attributes) {
+				DataType type = DataType.valueOf(a.getDataType());
+				SubjectAttributeValue sav = new SubjectAttributeValue(a.getName(), Multiplicity.valueOf(a.getMultiplicity()), type);
+				for(String string : a.getValues()) {
+					switch(type) {
+					case String : 
+						sav.addValue(string);
+						break;
+					case Boolean : 
+						sav.addValue(Boolean.valueOf(string));
+						break;
+					case DateTime : 
+						sav.addValue(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(string));
+						break;
+					case Integer : 
+						sav.addValue(Integer.valueOf(string));
+						break;
+					}
+				}
+				subject.addAttributeValue(sav);
+				//                  FIXME this isn't very good
+				if(!nameFound && (a.getName().toLowerCase().equals("name") || a.getName().toLowerCase().equals("subject:name"))) {
+					nameFound = true;
+					session.setAttribute("user_name", a.getValues().get(0));
+				}
+			}
+			
+			if(!nameFound)
+				throw new RuntimeException("No user name given");
+		} catch (JsonParseException e) {
+			throw new RuntimeException(e);
+		} catch (JsonMappingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		
+		session.setAttribute("subject", subject);
+		
 		MessageManager.getInstance().addMessage(session, "success",
 				"Welcome back, " + (String) session.getAttribute("user_name"));
 		return "redirect:/docs";
