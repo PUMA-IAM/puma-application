@@ -145,17 +145,20 @@ public class AuthenticationController {
 				SubjectAttributeValue sav = new SubjectAttributeValue(a.getName(), Multiplicity.valueOf(a.getMultiplicity()), type);
 				for(String string : a.getValues()) {
 					switch(type) {
-					case String : 
+					case String: 
 						sav.addValue(string);
 						break;
-					case Boolean : 
+					case Boolean: 
 						sav.addValue(Boolean.valueOf(string));
 						break;
-					case DateTime : 
+					case DateTime: 
 						sav.addValue(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(string));
 						break;
-					case Integer : 
+					case Integer: 
 						sav.addValue(Integer.valueOf(string));
+						break;
+					case Double:
+						sav.addValue(Double.valueOf(string));
 						break;
 					}
 				}
