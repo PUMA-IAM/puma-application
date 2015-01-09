@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import puma.application.webapp.msgs.MessageManager;
 import puma.applicationpdp.ApplicationPEP;
+import puma.applicationpdp.PEPHelpers;
 import puma.peputils.Action;
 import puma.peputils.Environment;
 import puma.peputils.Subject;
@@ -88,7 +89,8 @@ public class DocumentController {
 		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
 		Action action = new Action("send");		
 		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		String policyLang = (String) session.getAttribute("policyLang");
+		boolean authorized = PEPHelpers.getPEPHelper().getPEP(policyLang).isAuthorized(subject, object, action, environment);
 		// Enforce the decision
 		if(!authorized) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
@@ -114,7 +116,8 @@ public class DocumentController {
 		object.addAttributeValue(new ObjectAttributeValue("type", Multiplicity.ATOMIC, "document"));
 		Action action = new Action("send");		
 		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		String policyLang = (String) session.getAttribute("policyLang");
+		boolean authorized = PEPHelpers.getPEPHelper().getPEP(policyLang).isAuthorized(subject, object, action, environment);
 		// Enforce the decision
 		if(!authorized) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to send documents");
@@ -144,7 +147,8 @@ public class DocumentController {
 		puma.peputils.Object object = constructAuthzObject(doc);		
 		Action action = new Action("read");		
 		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		String policyLang = (String) session.getAttribute("policyLang");
+		boolean authorized = PEPHelpers.getPEPHelper().getPEP(policyLang).isAuthorized(subject, object, action, environment);
 		// Enforce the decision
 		if(!authorized) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to access document #" + doc.getId());
@@ -173,7 +177,8 @@ public class DocumentController {
 		puma.peputils.Object object = constructAuthzObject(doc);		
 		Action action = new Action("delete");		
 		Environment environment = constructEnvironment();
-		boolean authorized = ApplicationPEP.getInstance().isAuthorized(subject, object, action, environment);
+		String policyLang = (String) session.getAttribute("policyLang");
+		boolean authorized = PEPHelpers.getPEPHelper().getPEP(policyLang).isAuthorized(subject, object, action, environment);
 		// Enforce the decision
 		if(!authorized) {
 			MessageManager.getInstance().addMessage(session, "failure", "You are not allowed to delete document #" + doc.getId());

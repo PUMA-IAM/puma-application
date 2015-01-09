@@ -36,7 +36,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import puma.applicationpdp.ApplicationPEP;
-import puma.rmi.pdp.mgmt.PDPRegistryRemote;
+import puma.applicationpdp.PDPMgmtHelper;
+import puma.applicationpdp.PDPRegistryRemote;
+import puma.applicationpdp.PEPHelpers;
+import puma.stapl.pdp.StaplPDP;
 
 /**
  * This class is used to initialize the Application PDP from the web
@@ -66,7 +69,7 @@ public class PDPInitializer implements ServletContextListener {
 		// deregister the application PDP
 		if (isApplicationPDPRegistryConnectionOK()) {
 			try {
-				applicationPDPRegistry.deregister(ApplicationPEP.getInstance());
+				applicationPDPRegistry.deregister(PEPHelpers.getPDPMgmtHelper());
 			} catch (RemoteException exc) {
 				logger.log(
 						Level.SEVERE,
@@ -82,8 +85,15 @@ public class PDPInitializer implements ServletContextListener {
 		// initialize the PDP with all policies in the policy directory
 		try {
 			initializeProperties(e);
-			ApplicationPEP.getInstance().initializePDP(getPolicyDir());
-			logger.info("initialized application PDP");
+			if(!PEPHelpers.isInitialized()) {
+				StaplPDP stapl = new StaplPDP(getPolicyDir());
+				ApplicationPEP xacml = ApplicationPEP.getInstance();
+				xacml.initializePDP(getPolicyDir());
+				PEPHelpers.init(xacml, stapl);
+				UnicastRemoteObject.exportObject(stapl, 0);
+				UnicastRemoteObject.exportObject(xacml, 0);
+				logger.info("initialized application PDP");
+			}
 		} catch(Exception exc) {
 			logger.log(Level.SEVERE, "Error when setting up PEP", exc);
 			return;
@@ -188,9 +198,7 @@ public class PDPInitializer implements ServletContextListener {
 	 */
 	private void registerWithPDPRegistry() {
 		try {
-			UnicastRemoteObject.exportObject(
-					ApplicationPEP.getInstance(), 0);
-			applicationPDPRegistry.register(ApplicationPEP.getInstance());
+			applicationPDPRegistry.register(PEPHelpers.getPDPMgmtHelper());
 			logger.info("Registered the Application PDP");
 		} catch (RemoteException exc) {
 			logger.log(Level.SEVERE,

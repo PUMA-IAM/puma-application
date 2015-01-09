@@ -107,6 +107,9 @@ public class AuthenticationController {
 		if (!params.containsKey("PrimaryTenant"))
 			throw new RuntimeException("No tenant given for user " + session.getAttribute("Name"));
 		session.setAttribute("user_tenant", params.get("PrimaryTenant").get(0));
+		if (!params.containsKey("policyLang"))
+			throw new RuntimeException("No policy language specified.");
+		session.setAttribute("policyLang", params.get("policyLang").get(0));
 		if (params.containsKey("Tenant") && params.get("Tenant").size() > 0) {
 			SubjectAttributeValue tenantAttr = new SubjectAttributeValue("tenant", Multiplicity.GROUPED);
 			for (String t: params.get("Tenant").get(0).split(","))
