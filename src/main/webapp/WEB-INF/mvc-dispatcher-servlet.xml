@@ -18,6 +18,7 @@
 	<!-- CHANGE THIS TO YOUR PACKAGE -->
 	<context:component-scan base-package="puma.application.evaluation" />
 	<context:component-scan base-package="puma.application.webapp" />
+	<context:component-scan base-package="puma.application.pdp" />
 	<context:component-scan base-package="puma.sp.mgmt.repositories" />
 	<context:component-scan base-package="puma.sp.mgmt.model" />
 
